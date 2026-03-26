@@ -39,15 +39,11 @@ EVENT_SYMBOLS = {
 # ── Data loading ─────────────────────────────────────────────────────────────
 @st.cache_data
 def load_data():
-    import pyarrow.parquet as pq
-
-    DATA_ROOT = r"C:\Users\Aashish S\OneDrive - Amrita Vishwa Vidyapeetham\Documents\lila-viz\player_data"
-    DAYS = ["February_10", "February_11", "February_12", "February_13"]
-    MAP_CONFIGS = {
-        'AmbroseValley': {'scale': 900,  'origin_x': -370, 'origin_z': -473},
-        'GrandRift':     {'scale': 581,  'origin_x': -290, 'origin_z': -290},
-        'Lockdown':      {'scale': 1000, 'origin_x': -500, 'origin_z': -500},
-    }
+    df = pd.read_csv('lila_processed.csv')
+    df['ts'] = pd.to_datetime(df['ts'])
+    df['ts_seconds'] = (df['ts'].astype('int64') // 1_000_000_000).astype(int)
+    df['ts_seconds'] = df['ts_seconds'] - df['ts_seconds'].min()
+    return df
 
     frames = []
     for day in DAYS:
